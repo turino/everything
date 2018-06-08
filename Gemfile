@@ -8,6 +8,8 @@ gem "pg"
 gem "puma"
 gem "rails"
 
+gem "twilio-ruby"
+
 group :development, :test do
   gem "dotenv-rails"
   gem "factory_bot_rails"
