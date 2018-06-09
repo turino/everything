@@ -2,12 +2,8 @@ class InboundTextsController < ApplicationController
   def index
     message = Message.create(message_params)
 
-    if message.body.casecmp("hi").zero?
-      twilio_client.api.account.messages.create(
-        from: twilio_phone_number,
-        to: message.phone_number,
-        body: "I'm alive!",
-      )
+    if message.test?
+      SMS.send(to: phone_number, body: "I'm alive!")
       message.update(responded: true)
     end
   end
@@ -16,23 +12,16 @@ class InboundTextsController < ApplicationController
 
   def message_params
     {
-      body: params[:text],
-      phone_number: params[:msisdn],
+      body: message_body,
+      phone_number: phone_number,
     }
   end
 
-  def twilio_client
-    Twilio::REST::Client.new(*twilio_credentials)
+  def message_body
+    params[:text]
   end
 
-  def twilio_phone_number
-    Rails.application.credentials.twilio[:phone_number]
-  end
-
-  def twilio_credentials
-    Rails.application.credentials.twilio.values_at(
-      :account_sid,
-      :auth_token,
-    )
+  def phone_number
+    params[:msisdn]
   end
 end
