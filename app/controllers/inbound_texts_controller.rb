@@ -2,7 +2,7 @@ class InboundTextsController < ApplicationController
   def index
     message = Message.create(message_params)
 
-    if Message.last_response_at < 1.hour.ago
+    if message.body.casecmp("hi").zero?
       twilio_client.api.account.messages.create(
         from: twilio_phone_number,
         to: message.phone_number,
